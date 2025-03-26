@@ -12,10 +12,10 @@ section "cColliderHeader" {
   set iLeafTrisOffset [uint32 "iLeafTrisOffset"]
   set iFloatsOffset [uint32 "iFloatsOffset"]
 }
-set idk [expr ($iTreeListOffset - $iSuperNodeOffset) / 48]
-section "superTree $idk" {
-  for {set i 0} {$i < $idk} {incr i} {
-    section "node $i" {
+set numSuperNodes [expr ($iTreeListOffset - $iSuperNodeOffset) / 48]
+section -collapsed "$numSuperNodes superTree" {
+  for {set i 0} {$i < $numSuperNodes} {incr i} {
+    section -collapsed "$i" {
       section vMin { float "x"; float "y"; float "z" }
       section vMax { float "x"; float "y"; float "z" }
       uint32 "iSplitCoord"
@@ -28,13 +28,13 @@ section "superTree $idk" {
   }
 }
 set treeListSize [expr $iTreeOffset - $iTreeListOffset]
-bytes $treeListSize "treeList $treeListSize"
+bytes $treeListSize "$treeListSize treeList"
 #section "cCollider"; section "->0_iNumTrees"; section " = " {}
 #
 set numTrees [expr ($iNodeOffset - $iTreeOffset) / 72]
-section "trees $numTrees" {
+section -collapsed "$numTrees trees" {
   for {set i 0} {$i < $numTrees} {incr i} {
-    section "$i" {
+    section -collapsed "$i" {
       section "vMin" { float "x"; float "y"; float "z" }
       section "vMax" { float "x"; float "y"; float "z" }
       uint32 "pVBuffer"
@@ -54,40 +54,23 @@ section "trees $numTrees" {
     }
   }
 }
-set nodesToShow 20
-set nodesSize [expr $iTriListOffset - $iNodeOffset] 
-set numNodes [expr "$nodesSize" / 0x28]
-section "nodeList $numNodes" {
-  for {set i 0} {$i < [expr $nodesToShow]} {incr i} {
-    section "$i" {
-      bytes 12 ;#section "vMin" { float "x"; float "y"; float "z" }
-      bytes 12 ;#section "vMax" { float "x"; float "y"; float "z" }
-      #section "CColliderNode_u_24" {
-        #section "CColliderNode_u_24_s_0 union" {
+set numNodes [expr ($iTriListOffset - $iNodeOffset) / 0x28]
+section -collapsed "$numNodes nodeList" {
+  for {set i 0} {$i < [expr $numNodes]} {incr i} {
+    section -collapsed "$i" {
+      section "vMin" { float "x"; float "y"; float "z" }
+      section "vMax" { float "x"; float "y"; float "z" }
+      section "CColliderNode_u_24" {
+        section "CColliderNode_u_24_s_0 union" {
           #uint32 "iSplitCoord"; # or iTriCount
           #float "fBoundary"; # or uint32 pLeafTris
-          uint32 ;#"iTriCount"
-          uint32 ;#"pLeafTris"
-        #}
-      #}
+          uint32 "iTriCount"
+          uint32 "pLeafTris"
+        }
+      }
       uint32 "pChild1"
       uint32 "pChild2"
     }
-  }
-  bytes [expr $nodesSize - (($nodesToShow + 1) * 0x28)] "[expr $nodesToShow] to [expr $numNodes - 2]"
-  section [expr $numNodes - 1] {
-    section "vMin" { float "x"; float "y"; float "z" }
-    section "vMax" { float "x"; float "y"; float "z" }
-    section "CColliderNode_u_24" {
-      section "s_1" {
-        #uint32 "iSplitCoord"
-        #float "fBoundary"
-        uint32 "iTriCount"
-        uint32 "pLeafTris"
-      }
-    }
-    uint32 "pChild1"
-    uint32 "pChild2"
   }
 }
 
