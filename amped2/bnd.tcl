@@ -1,3 +1,5 @@
+entry "label" "" 1 100000
+
 section -collapsed endOfRun {
   set len [uint32]
   for {set i 0} {$i < $len} {incr i} {
