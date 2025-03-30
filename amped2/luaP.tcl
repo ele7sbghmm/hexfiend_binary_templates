@@ -89,7 +89,7 @@ proc decode {} {
 proc code {} {
   global globals reg consts Op C B A Bx
 
-  section "code" {
+  section -collapsed "code" {
     set sizeOfCode [uint32 "size of code"]
 
     for {set i 0} {$i < $sizeOfCode} {incr i} {
@@ -124,22 +124,22 @@ proc code {} {
           set d [lindex $reg $A]
           if {$B <  250 && $C <  250} {
             #puts " SETTABLE 0  B$B <  250 && C$C <  250"
-            puts "   [lindex $reg $B]  [lindex $reg $C]"
+            #puts "   [lindex $reg $B]  [lindex $reg $C]"
             dict set d [lindex $reg $B] [lindex $reg $C]
           }
           if {$B <  250 && $C >= 250} {
             #puts " SETTABLE 1  B$B <  250 && C$C >= 250"
-            puts "   [lindex $reg $B] [lindex $consts [expr $C % 250]]"
+            #puts "   [lindex $reg $B] [lindex $consts [expr $C % 250]]"
             dict set d [lindex $reg $B] [lindex $consts [expr $C % 250]]
           }
           if {$B >= 250 && $C <  250} {
             #puts " SETTABLE 2  B$B >= 250 && C$C <  250"
-            puts "   [lindex $consts [expr $B % 250]] [lindex $reg $C]"
+            #puts "   [lindex $consts [expr $B % 250]] [lindex $reg $C]"
             dict set d [lindex $consts [expr $B % 250]] [lindex $reg $C]
           }
           if {$B >= 250 && $C >= 250} {
             #puts " SETTABLE 3  B$B >= 250 && C$C >= 250"
-            puts "   [lindex $consts [expr $B % 250]] [lindex $consts [expr $C % 250]"
+            #puts "   [lindex $consts [expr $B % 250]] [lindex $consts [expr $C % 250]"
             dict set d [lindex $consts [expr $B % 250]] [lindex $consts [expr $C % 250]]
           }
           set reg [lset reg $A $d]
@@ -163,6 +163,12 @@ proc code {} {
         }
       }
     }
+  }
+  foreach {item dic} [lindex $reg 0] {
+    puts "$item $dic"
+    entry $item [format "%.2f" [lindex $dic 0]]
+    entry "" [format "%.2f" [lindex $dic 1]]
+    entry "" [format "%.2f" [lindex $dic 2]]
   }
 }
 proc function {index} {
