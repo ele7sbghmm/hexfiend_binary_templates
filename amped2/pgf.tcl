@@ -47,8 +47,6 @@ set vertexHeaders [bytes [expr $numVertexBuffers * 12] "Vertex Headers"]
 #}
 
 set indexData    [bytes $ibDataSize "Index Data"]
-#set indexHeaders [bytes [expr $numIndexBuffers * 12] "Index Headers"]
-#set indexHeaders [list [repeat $numIndexBuffers [section -collapse "" { uint32; uint32 "offset: "; uint32 }]]]
 set indexHeaders [list]
 section -collapsed "index headers" {
   for {set i 0} {$i < $numIndexBuffers} {incr i} {
@@ -57,13 +55,40 @@ section -collapsed "index headers" {
 }
 
 hex 4 "-"
-if { $numPushBuffers }    { set pushBufferData     [bytes $numPushBuffers "PushBufferData"] }
-if { $bvDataSize }        { set boundingVolumeData [bytes $bvDataSize "Bounding Volume Data"] }
-if { $miscDataSize }      { set miscData           [bytes $miscDataSize "Misc Data"] }
-if { $influenceDataSize } { set influenceData      [bytes $influenceDataSize "Influence Data"] }
-if { $limDataSize }       { set limData            [bytes $limDataSize "LIM Data"] }
-if { $collisionDataSize } { set collisionData      [bytes $collisionDataSize "Collision Data"] }
-if { $stringTableSize }   { set stringTable        [bytes $stringTableSize "String Table"] }
-if { $numPrimLists }      { set primList           [bytes [expr $numPrimLists * 48] "Prim List"] }
-if { $numVBGeomData }     { set vbGeomData         [bytes [expr $numVBGeomData * 48] "vb geom data list"] }
+if {$numPushBuffers} {
+  set pbOffset [pos]
+  set pushBufferData [bytes $pbDataSize "PushBufferData"]
+}
+if {$bvDataSize} {
+  set bvOffset [pos]
+  set boundingVolumeData [bytes $bvDataSize "Bounding Volume Data"]
+}
+if {$miscDataSize} {
+  set miscOffset [pos]
+  set miscData [bytes $miscDataSize "Misc Data"]
+}
+if {$influenceDataSize} {
+  set influenceOffset [pos]
+  set influenceData [bytes $influenceDataSize "Influence Data"]
+}
+if {$limDataSize} {
+  set limOffset [pos]
+  set limData [bytes $limDataSize "LIM Data"]
+}
+if {$collisionDataSize} {
+  set collisionOffset [pos]
+  set collisionData [bytes $collisionDataSize "Collision Data"]
+}
+if {$stringTableSize} {
+  set stringTableOffset [pos]
+  set stringTable [bytes $stringTableSize "String Table"]
+}
+if {$numPrimLists} {
+  set primListOffset [pos]
+  set primListData [bytes [expr $numPrimLists * 48] "Prim List"]
+}
+if {$numVBGeomData} {
+  set vbGeomOffset [pos]
+  set vbGeomData [bytes [expr $numVBGeomData * 48] "vb geom data list"]
+}
 
