@@ -1,7 +1,13 @@
 little_endian
 
+proc delimiter {} {
+  requires [pos] "01 00 ff 0f"
+  bytes 4
+  # hex 4 "-"
+}
+
 float "version"
-hex 4 "-"
+delimiter
 
 section -collapsed "PgfSizes" {
   uint32 "TotalFileSize"
@@ -10,13 +16,13 @@ section -collapsed "PgfSizes" {
   set numTextures     [uint32 "NumTextures"]
   set shaderDataSize  [uint32 "ShaderDataSize"]
 }
-hex 4 "-"
+delimiter
 
 bytes [expr $numTextures * 20]
 bytes $textureDataSize "TextureBuffer"
-hex 4 "-"
+delimiter
 bytes $shaderDataSize "ShaderBuffer"
-hex 4 "-"
+delimiter
 
 section -collapsed "PgfHeader" {
   set vbDataSize        [uint32 "VBDataSize"]
@@ -37,7 +43,7 @@ section -collapsed "PgfHeader" {
   set numJoints         [uint32 "NumJoints"]
 }
 
-hex 4 "-"
+delimiter
 #dict set CFileManager vertexData    [bytes $vbDataSize "Vertex Data"]
 bytes $vbDataSize "vertex data"
 set vertexHeaders [bytes [expr $numVertexBuffers * 12] "Vertex Headers"]
@@ -54,7 +60,7 @@ section -collapsed "index headers" {
   }
 }
 
-hex 4 "-"
+delimiter
 if {$numPushBuffers} {
   set pbOffset [pos]
   set pushBufferData [bytes $pbDataSize "PushBufferData"]
