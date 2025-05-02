@@ -54,47 +54,77 @@ set vertexHeaders [bytes [expr $numVertexBuffers * 12] "Vertex Headers"]
 
 set indexData    [bytes $ibDataSize "Index Data"]
 set indexHeaders [list]
-section -collapsed "index headers" {
+section -collapsed "$numIndexBuffers index headers" {
   for {set i 0} {$i < $numIndexBuffers} {incr i} {
     uint32; lappend $indexHeaders [uint32 "$i"]; uint32
   }
 }
 
 delimiter
-if {$numPushBuffers} {
-  set pbOffset [pos]
-  set pushBufferData [bytes $pbDataSize "PushBufferData"]
+section -collapsed "$numPushBuffers push buffer ressources" {
+  if {$numPushBuffers} {
+    set pbOffset [pos]
+    set pushBufferData [bytes $pbDataSize "push buffer data"]
+    for {set i 0} {$i < $numPushBuffers} {incr i} {
+      section -collapsed "$i" {
+        hex 4 "Common"
+        uint32 "Data"
+        uint32 "Lock"
+        uint32 "Size"
+        uint32 "AllocationSize"
+        entry "InterruptId" "?"
+      }
+    }
+  }
 }
+
 if {$bvDataSize} {
   set bvOffset [pos]
-  set boundingVolumeData [bytes $bvDataSize "Bounding Volume Data"]
+  set boundingVolumeData [bytes $bvDataSize "$bvDataSize bounding volume data"]
+} else {
+  entry "$bvDataSize bounding volume data" ""
 }
 if {$miscDataSize} {
   set miscOffset [pos]
-  set miscData [bytes $miscDataSize "Misc Data"]
+  set miscData [bytes $miscDataSize "$miscDataSize misc data"]
+} else {
+  entry "$miscDataSize misc data" ""
 }
 if {$influenceDataSize} {
   set influenceOffset [pos]
-  set influenceData [bytes $influenceDataSize "Influence Data"]
+  set influenceData [bytes $influenceDataSize "$influenceDataSize influence data"]
+} else {
+  entry "$influenceDataSize influence data" ""
 }
 if {$limDataSize} {
   set limOffset [pos]
-  set limData [bytes $limDataSize "LIM Data"]
+  set limData [bytes $limDataSize "$limDataSize lim data"]
+} else {
+  entry "$limDataSize lim data" ""
 }
 if {$collisionDataSize} {
   set collisionOffset [pos]
-  set collisionData [bytes $collisionDataSize "Collision Data"]
+  set collisionData [bytes $collisionDataSize "$collisionDataSize collision data"]
+} else {
+  entry "$collisionDataSize collision data" ""
 }
 if {$stringTableSize} {
   set stringTableOffset [pos]
-  set stringTable [bytes $stringTableSize "String Table"]
+  set stringTable [bytes $stringTableSize "$stringTableSize string table data"]
+} else {
+  entry "$stringTableSize string table data" ""
 }
 if {$numPrimLists} {
   set primListOffset [pos]
-  set primListData [bytes [expr $numPrimLists * 48] "Prim List"]
+  set primListData [bytes [expr $numPrimLists * 48] "$numPrimLists prim lists data"]
+} else {
+  entry "$numPrimLists prim lists data" ""
 }
 if {$numVBGeomData} {
   set vbGeomOffset [pos]
-  set vbGeomData [bytes [expr $numVBGeomData * 48] "vb geom data list"]
+  set vbGeomData [bytes [expr $numVBGeomData * 48] "$numVBGeomData vb geom data"]
+} else {
+  entry "$numVBGeomData vb geoms data" ""
 }
 
+bytes [expr ([len] - 4) - [pos]] "node data"
